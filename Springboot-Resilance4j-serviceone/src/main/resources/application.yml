@@ -1,0 +1,41 @@
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      service1:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+
+
+  retry:
+    instances:
+      service1:
+        maxRetryAttempts: 5
+        waitDuration: 10s
+
+
+  rate-limiter:
+    instances:
+      myRateLimiter:
+        limitForPeriod: 10        # Number of requests allowed in the time period
+        limitForPeriodNano: 1000000000 # Time period in nanoseconds (1 second)
+        limitRefreshPeriod: 1000000000 # Time period to refresh the limit (1 second)
